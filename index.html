@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VaultOffers Pro</title>
+<style>
+        body { background: #050505; color: #fff; font-family: sans-serif; margin: 0; padding: 20px; }
+        #admin-panel { display: none; background: #1a1a1a; padding: 20px; border-radius: 15px; border: 1px solid #00d4ff; margin-bottom: 20px; }
+        .input-box { width: 100%; padding: 15px; margin: 8px 0; border-radius: 8px; border: 1px solid #333; background: #000; color: #fff; box-sizing: border-box; }
+        .btn { padding: 15px; width: 100%; margin-top: 10px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; }
+        .post-btn { background: #00d4ff; color: #000; }
+        .card { background: #111; padding: 20px; border-radius: 15px; margin-bottom: 15px; border-left: 5px solid #00d4ff; }
+        .cat-tag { background: #333; padding: 3px 10px; border-radius: 15px; font-size: 12px; color: #00d4ff; }
+        .time { color: #666; font-size: 12px; float: right; }
+        .del-btn { background: #ff4d4d; color: #fff; margin-top: 15px; padding: 8px; border-radius: 5px; border: none; cursor: pointer; }
+        .hidden-admin { background: none; border: none; color: #333; cursor: pointer; margin-bottom: 10px; }
+        /* Ad Space Style */
+        .ad-container { text-align: center; margin: 20px 0; padding: 10px; background: #111; border: 1px dashed #444; }
+</style>
+  </head>
+  <body>
+
+    <button class="hidden-admin" onclick="secureLogin()">Admin</button>
+
+    <div class="ad-container">
+	  <p style="color:#555; font-size:12px;">Advertisement</p>
+	</div>
+
+    <div id="admin-panel">
+	  <input type="text" id="dealName" class="input-box" placeholder="Product Name">
+	  <input type="text" id="dealCat" class="input-box" placeholder="Category">
+	  <input type="text" id="dealLink" class="input-box" placeholder="Affiliate Link">
+	  <button class="btn post-btn" onclick="addDeal()">Publish Deal</button>
+    </div>
+
+    <div id="deals-display"></div>
+
+<script>
+        function secureLogin() {
+            let pass = prompt("Enter Admin Password:");
+            if (pass === "Umair@9834") { document.getElementById('admin-panel').style.display = 'block'; }
+        }
+
+        function updateDisplay() {
+            let display = document.getElementById('deals-display');
+            let data = localStorage.getItem('myDeals');
+            display.innerHTML = data && data.length > 0 ? data : '<p style="text-align:center; color:#444; margin-top:50px;">No active deals available.</p>';
+        }
+
+        window.onload = updateDisplay;
+
+        function addDeal() {
+            let name = document.getElementById('dealName').value;
+            let cat = document.getElementById('dealCat').value || "General";
+            let link = document.getElementById('dealLink').value;
+            
+            if(name && link) {
+                let id = new Date().getTime();
+                let date = new Date().toLocaleDateString();
+                
+                let newCard = '<div class="card" id="'+id+'">' +
+                    '<span class="cat-tag">'+cat+'</span> <span class="time">'+date+'</span>' +
+                    '<h3>'+name+'</h3>' +
+                    '<a href="'+link+'" style="color:#00d4ff; text-decoration:none;">🔗 Visit Deal</a><br>' +
+                    '<button class="del-btn" onclick="del('+id+')">Delete</button>' +
+                    '</div>';
+                
+                let currentData = localStorage.getItem('myDeals') || "";
+                localStorage.setItem('myDeals', newCard + currentData);
+                updateDisplay();
+                
+                document.getElementById('dealName').value = '';
+                document.getElementById('dealLink').value = '';
+                document.getElementById('dealCat').value = '';
+            }
+        }
+
+        function del(id) {
+            document.getElementById(id).remove();
+            localStorage.setItem('myDeals', document.getElementById('deals-display').innerHTML);
+            updateDisplay();
+        }
+</script>
+  </body>
+</html>
+
